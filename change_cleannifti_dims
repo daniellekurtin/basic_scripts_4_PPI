@@ -1,3 +1,5 @@
+
+
 ## Changing dimmensions of cleannifti's from 3mm to 2mm
 
 #15/08/19 changing CREST space from 3mm to 2mm
@@ -36,6 +38,3 @@ do
 echoandrun "flirt -in CREST${PBS_ARRAY_INDEX}_CRTac3.nii.gz -ref /apps/fsl/5.0.10/fsl/data/standard/MNI152_T1_2mm_brain.nii.gz -applyxfm -usesqform -out CREST${PBS_ARRAY_INDEX}_CRTac3_2mm.nii.gz"
 
 done
-
-
-
