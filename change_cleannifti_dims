@@ -1,0 +1,39 @@
+#15/08/19 changing CREST space from 3mm to 2mm
+#!/bin/sh
+#must run with qsub otherwise PBS won't work
+#PBS -l walltime=5:00:00
+#PBS -l select=1:ncpus=1:mem=5gb
+#PBS -J 1-35
+#this is the time allocated per sub-job
+#cleans out fsl & loads others
+
+module purge
+
+module load fsl/5.0.10
+
+echoandrun() {
+
+    echo ${*}
+
+        eval ${*}
+
+}
+
+fsf_dir="${HOME}/CRESTTBI/cleannifti_storage/cleannifticopy2" ; #directory where your template fsf file is
+
+cd "$fsf_dir"/
+
+echo create list of subj
+
+subjarray=`ls -d CREST*_CRTac3.nii.gz`
+
+for i in ${subjarray[*]};
+
+do
+
+echoandrun "flirt -in CREST${PBS_ARRAY_INDEX}_CRTac3.nii.gz -ref /apps/fsl/5.0.10/fsl/data/standard/MNI152_T1_2mm_brain.nii.gz -applyxfm -usesqform -out CREST${PBS_ARRAY_INDEX}_CRTac3_2mm.nii.gz"
+
+done
+
+
+
