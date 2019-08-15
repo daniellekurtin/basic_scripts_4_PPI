@@ -1,3 +1,5 @@
+## Changing dimmensions of cleannifti's from 3mm to 2mm
+
 #15/08/19 changing CREST space from 3mm to 2mm
 #!/bin/sh
 #must run with qsub otherwise PBS won't work
