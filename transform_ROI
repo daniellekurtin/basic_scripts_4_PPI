@@ -1,0 +1,52 @@
+
+#13/09/19 changing ROI space from standard to participant space
+#!/bin/sh
+#must run with qsub otherwise PBS won't work
+#PBS -l walltime=5:00:00
+#PBS -l select=1:ncpus=1:mem=5gb
+#PBS -J 1-35
+
+module purge
+module load fsl/5.0.10
+
+echoandrun() {
+    echo ${*}
+        eval ${*}
+}
+
+###DEFINE YO VARS###
+
+fsf_dir="${HOME}/CRESTTBI/cleannifti_storage/cleannifticopy2/"               ; #directory where your template fsf file is
+out_dir="${HOME}/CRESTTBI/cleannifti_storage/cleannifticopy2/"               ; #same as above
+standard="/apps/fsl/5.0.10/fsl/data/standard/MNI152_T1_2mm_brain.nii.gz"     ; #directory where MNI152 atlas is
+ROI="dACC"
+session="CRTac1"
+
+###BINARISE THE MASK###
+
+cd "$fsf_dir"
+for i in ${ROI}
+do
+fslmaths ${ROI}.nii.gz -bin ${ROI}.nii.gz
+done
+
+##BRAIN TO BRAIN###
+subjarray="CREST1"
+for i in ${subjarray[*]} ;
+do
+echoandrun "flirt -in /apps/fsl/5.0.10/fsl/data/standard/MNI152_T1_2mm_brain.nii.gz  -ref CREST${PBS_ARRAY_INDEX}_${session}.nii.gz -dof 12 -out MNI2CREST${PBS_ARRAY_INDEX}_${session} -omat MNI2CREST${PBS_ARRAY_INDEX}${session}.mat" ;
+done
+
+###MASK TO BRAIN###
+subjarray="CREST1"
+for i in ${subjarray[*]} ;
+do
+echoandrun "flirt -in ${ROI}.nii.gz -ref CREST${PBS_ARRAY_INDEX}_${session}.nii.gz -applyxfm -init MNI2CREST${PBS_ARRAY_INDEX}${session}.mat -out CREST${PBS_ARRAY_INDEX}_${session}_${ROI}.nii.gz" ;
+done
+
+###BINARISE THE MASK###
+for i in ${ROI}
+do fslmaths CREST${PBS_ARRAY_INDEX}_${session}_${ROI}.nii.gz -bin CREST${PBS_ARRAY_INDEX}_${session}_${ROI}.nii.gz
+done
+
+
