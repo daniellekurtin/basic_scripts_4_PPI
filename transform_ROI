@@ -1,3 +1,11 @@
+### WHY THIS IS NEEDED ###
+## Using the basic method of transforming ROIs from standard to native space does not work well in TBI patients,
+## with many ROIs registering outside the brain without this method.
+
+### WHAT IT DOES###
+## This script transorms the native-space, clean-nifti to standard space, saves the changes/shifts needed to get from  
+## one space to another in a .mat file, and then uses this to shift the standard-space ROI to each clean nifti native space. 
+
 
 #13/09/19 changing ROI space from standard to participant space
 #!/bin/sh
